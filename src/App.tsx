@@ -4,10 +4,12 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Layout from './components/Layout';
+import LandingPage from './pages/LandingPage';
 
 import Users from './pages/Users';
 import Books from './pages/Books';
 import Categories from './pages/Categories';
+import Support from './pages/SupportPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useAuth();
@@ -26,9 +28,10 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
 
-          <Route path="/" element={
+          <Route path="/admin" element={
             <ProtectedRoute>
               <Layout />
             </ProtectedRoute>
@@ -37,6 +40,7 @@ function App() {
             <Route path="books" element={<Books />} />
             <Route path="users" element={<Users />} />
             <Route path="categories" element={<Categories />} />
+            <Route path="support" element={<Support />} />
           </Route>
         </Routes>
       </Router>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, BookOpen, Users, LogOut, Tags, Moon, Sun, Menu } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Users, LogOut, Tags, Moon, Sun, Menu, MessageSquare } from 'lucide-react';
 
 const Layout: React.FC = () => {
     const { logout, user } = useAuth();
@@ -17,10 +17,11 @@ const Layout: React.FC = () => {
     const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
     const menuItems = [
-        { path: '/', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
-        { path: '/books', icon: <BookOpen size={20} />, label: 'Books' },
-        { path: '/users', icon: <Users size={20} />, label: 'Users' },
-        { path: '/categories', icon: <Tags size={20} />, label: 'Categories' },
+        { path: '/admin', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
+        { path: '/admin/books', icon: <BookOpen size={20} />, label: 'Books' },
+        { path: '/admin/users', icon: <Users size={20} />, label: 'Users' },
+        { path: '/admin/categories', icon: <Tags size={20} />, label: 'Categories' },
+        { path: '/admin/support', icon: <MessageSquare size={20} />, label: 'Support' },
     ];
 
     const themeClasses = isDarkMode
@@ -50,8 +51,8 @@ const Layout: React.FC = () => {
                                     <Link
                                         to={item.path}
                                         className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
-                                                ? 'font-medium shadow-sm'
-                                                : isDarkMode ? 'text-gray-400 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-50'
+                                            ? 'font-medium shadow-sm'
+                                            : isDarkMode ? 'text-gray-400 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-50'
                                             }`}
                                         style={isActive ? { backgroundColor: `${colors.primary}15`, color: colors.primary } : {}}
                                     >

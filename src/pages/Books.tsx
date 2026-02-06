@@ -60,7 +60,10 @@ const BooksPage: React.FC = () => {
         subcategoryId: 0, // Stores ID
         condition: 'good',
         type: 'sell',
-        location: { address: 'Riyadh', lat: 24.7136, lng: 46.6753 }
+        location: { address: 'Riyadh', lat: 24.7136, lng: 46.6753 },
+        school: '',
+        board: '',
+        classLevel: ''
     });
 
     useEffect(() => {
@@ -166,7 +169,8 @@ const BooksPage: React.FC = () => {
                 category: '', categoryId: 0,
                 subcategory: '', subcategoryId: 0,
                 condition: 'good', type: 'sell',
-                location: { address: 'Riyadh', lat: 24.7136, lng: 46.6753 }
+                location: { address: 'Riyadh', lat: 24.7136, lng: 46.6753 },
+                school: '', board: '', classLevel: ''
             });
             setSelectedMainCat('');
             setImageFile(null);
@@ -183,6 +187,17 @@ const BooksPage: React.FC = () => {
                 setBooks(books.filter(b => b._id !== id));
             } catch (error) {
                 console.error('Error deleting book:', error);
+            }
+        }
+    };
+
+    const handleMarkSold = async (id: string) => {
+        if (window.confirm('Mark this book as SOLD?')) {
+            try {
+                await api.put(`/books/${id}`, { status: 'sold' });
+                setBooks(books.map(b => b._id === id ? { ...b, status: 'sold' } : b));
+            } catch (error) {
+                console.error('Error updating book:', error);
             }
         }
     };
@@ -330,7 +345,16 @@ const BooksPage: React.FC = () => {
                                             {book.status}
                                         </span>
                                     </td>
-                                    <td className="py-4 px-6">
+                                    <td className="py-4 px-6 flex items-center gap-2">
+                                        {book.status === 'available' && (
+                                            <button
+                                                onClick={() => handleMarkSold(book._id)}
+                                                className="px-2 py-1 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded border border-blue-200"
+                                                title="Mark as Sold"
+                                            >
+                                                Mark Sold
+                                            </button>
+                                        )}
                                         <button
                                             onClick={() => handleDelete(book._id)}
                                             className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all"
@@ -516,6 +540,42 @@ const BooksPage: React.FC = () => {
                                             <option key={sub.id} value={sub.id}>{sub.name}</option>
                                         ))}
                                     </select>
+                                </div>
+
+                                {/* School/Board/Class (Optional) */}
+                                <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-gray-100 pt-4 mt-2">
+                                    <div className="md:col-span-3 text-sm font-semibold text-gray-800 mb-2">School / Textbook Details (Optional)</div>
+
+                                    <div>
+                                        <label className="block text-gray-700 text-xs font-bold mb-1">School Name</label>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 outline-none text-sm"
+                                            value={newBook.school || ''} // Use safe access
+                                            onChange={e => setNewBook({ ...newBook, school: e.target.value })}
+                                            placeholder="e.g. DPS Riyadh"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 text-xs font-bold mb-1">Board</label>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 outline-none text-sm"
+                                            value={newBook.board || ''}
+                                            onChange={e => setNewBook({ ...newBook, board: e.target.value })}
+                                            placeholder="e.g. CBSE / IGCSE"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 text-xs font-bold mb-1">Class/Grade</label>
+                                        <input
+                                            type="text"
+                                            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 outline-none text-sm"
+                                            value={newBook.classLevel || ''}
+                                            onChange={e => setNewBook({ ...newBook, classLevel: e.target.value })}
+                                            placeholder="e.g. Grade 10"
+                                        />
+                                    </div>
                                 </div>
 
                                 {/* Image Path/URL */}

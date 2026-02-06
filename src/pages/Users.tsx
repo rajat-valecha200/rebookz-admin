@@ -8,6 +8,7 @@ interface UserData {
     email: string;
     phone: string;
     role: string;
+    isSuspended: boolean;
     createdAt: string;
 }
 
@@ -48,122 +49,117 @@ const UsersPage: React.FC = () => {
         }
     };
 
+    const handleSuspend = async (id: string, currentStatus: boolean) => {
+        if (window.confirm(`Are you sure you want to ${currentStatus ? 'ACTIVATE' : 'SUSPEND'} this user?`)) {
+            try {
+                const { data } = await api.put(`/users/${id}/suspend`, { isSuspended: !currentStatus });
+                setUsers(users.map(u => u._id === id ? { ...u, isSuspended: data.isSuspended } : u));
+            } catch (error) {
+                console.error('Error suspending user:', error);
+                alert('Failed to update suspension status');
+            }
+        }
+    };
+
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [newUser, setNewUser] = useState({ name: '', email: '', phone: '', password: '', role: 'user' });
+
+    const handleCreateUser = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            await api.post('/users', newUser);
+            setShowCreateModal(false);
+            setNewUser({ name: '', email: '', phone: '', password: '', role: 'user' });
+            fetchUsers(1);
+            alert('User created successfully');
+        } catch (error: any) {
+            console.error('Error creating user:', error);
+            alert(error.response?.data?.message || 'Failed to create user');
+        }
+    };
+
     if (loading) return <div className="p-8 text-center text-gray-500">Loading users...</div>;
 
     return (
         <div className="w-full">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <h1 className="text-2xl font-bold text-gray-800">Users Management</h1>
-                <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-semibold flex-1 md:flex-none text-center">
-                    Total Users: {total}
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => setShowCreateModal(true)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center"
+                    >
+                        + Add User
+                    </button>
+                    <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-semibold flex-1 md:flex-none text-center">
+                        Total: {total}
+                    </div>
                 </div>
             </div>
 
             {/* Desktop Table View */}
-            <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left min-w-[700px]">
-                        <thead className="bg-gray-50/50">
-                            <tr className="border-b border-gray-100 text-gray-500 text-sm">
-                                <th className="py-4 px-6 font-medium">Name</th>
-                                <th className="py-4 px-6 font-medium">Contact</th>
-                                <th className="py-4 px-6 font-medium">Role</th>
-                                <th className="py-4 px-6 font-medium">Joined Date</th>
-                                <th className="py-4 px-6 font-medium">Actions</th>
+                        <thead className="bg-gray-50/50 text-gray-500 text-xs uppercase font-medium">
+                            <tr className="border-b border-gray-50">
+                                <th className="py-3 px-4 rounded-l-lg">Name</th>
+                                <th className="py-3 px-4">Contact</th>
+                                <th className="py-3 px-4">Role</th>
+                                <th className="py-3 px-4">Joined Date</th>
+                                <th className="py-3 px-4 rounded-r-lg">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="divide-y divide-gray-50">
                             {users.map((user) => (
-                                <tr key={user._id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
-                                    <td className="py-4 px-6">
+                                <tr key={user._id} className="hover:bg-blue-50/30 transition-colors">
+                                    <td className="py-3 px-4">
                                         <div className="flex items-center">
-                                            <div className="bg-gray-100 rounded-full p-2 mr-3 text-gray-400">
-                                                <User size={18} />
+                                            <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs mr-3">
+                                                {user.name?.charAt(0).toUpperCase()}
                                             </div>
                                             <span className="font-medium text-gray-800">{user.name}</span>
                                         </div>
                                     </td>
-                                    <td className="py-4 px-6 text-gray-600">
+                                    <td className="py-3 px-4 text-gray-600">
                                         <div className="text-sm text-gray-800 font-medium">{user.phone || 'N/A'}</div>
                                         <div className="text-xs text-gray-400">{user.email}</div>
                                     </td>
-                                    <td className="py-4 px-6">
-                                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'
+                                    <td className="py-3 px-4">
+                                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'
                                             }`}>
                                             {user.role}
                                         </span>
                                     </td>
-                                    <td className="py-4 px-6 text-gray-500 text-sm">
+                                    <td className="py-3 px-4 text-gray-500 text-xs">
                                         {new Date(user.createdAt).toLocaleDateString()}
                                     </td>
-                                    <td className="py-4 px-6">
+                                    <td className="py-3 px-4 flex items-center gap-2">
+                                        <button
+                                            onClick={() => handleSuspend(user._id, user.isSuspended)}
+                                            className={`px-3 py-1 text-xs font-semibold rounded-lg border transition-all ${user.isSuspended ? 'bg-green-50 text-green-600 border-green-200 hover:bg-green-100' : 'bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100'}`}
+                                            title={user.isSuspended ? "Activate User" : "Suspend User"}
+                                        >
+                                            {user.isSuspended ? "Activate" : "Suspend"}
+                                        </button>
                                         <button
                                             onClick={() => handleDelete(user._id)}
-                                            className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+                                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
                                             title="Delete User"
                                         >
-                                            <Trash2 size={18} />
+                                            <Trash2 size={16} />
                                         </button>
                                     </td>
                                 </tr>
                             ))}
                             {users.length === 0 && (
                                 <tr>
-                                    <td colSpan={5} className="py-12 text-center text-gray-400 italic">No users found</td>
+                                    <td colSpan={5} className="py-12 text-center text-gray-400 italic bg-gray-50/30 rounded-lg m-4">No users found</td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
                 </div>
-            </div>
-
-            {/* Mobile Card View */}
-            <div className="md:hidden space-y-4">
-                {users.map((user) => (
-                    <div key={user._id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                        <div className="flex justify-between items-start mb-3">
-                            <div className="flex items-center space-x-3">
-                                <div className="p-2 bg-blue-50 text-blue-500 rounded-full">
-                                    <User size={20} />
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-gray-800">{user.name}</h3>
-                                    <p className="text-xs text-gray-500">{user.email}</p>
-                                </div>
-                            </div>
-                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'
-                                }`}>
-                                {user.role}
-                            </span>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-600 mb-4 pl-1">
-                            <div>
-                                <span className="text-gray-400 text-xs block">Phone</span>
-                                <span className="font-medium">{user.phone || 'N/A'}</span>
-                            </div>
-                            <div>
-                                <span className="text-gray-400 text-xs block">Joined</span>
-                                <span className="font-medium">{new Date(user.createdAt).toLocaleDateString()}</span>
-                            </div>
-                        </div>
-
-                        <div className="flex justify-end pt-3 border-t border-gray-50">
-                            <button
-                                onClick={() => handleDelete(user._id)}
-                                className="flex items-center text-red-500 hover:text-red-700 text-sm font-medium px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors"
-                            >
-                                <Trash2 size={16} className="mr-1.5" />
-                                Remove User
-                            </button>
-                        </div>
-                    </div>
-                ))}
-                {users.length === 0 && (
-                    <div className="text-center py-10 text-gray-400 italic bg-gray-50 rounded-xl border border-dashed border-gray-200">
-                        No users found.
-                    </div>
-                )}
             </div>
 
             {/* Pagination Controls */}
@@ -186,7 +182,84 @@ const UsersPage: React.FC = () => {
                     Next
                 </button>
             </div>
-        </div >
+
+            {/* Create User Modal */}
+            {showCreateModal && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-6">
+                        <h2 className="text-xl font-bold mb-4 text-gray-800">Create New User</h2>
+                        <form onSubmit={handleCreateUser} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                                <input
+                                    type="text"
+                                    required
+                                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                    value={newUser.name}
+                                    onChange={e => setNewUser({ ...newUser, name: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                <input
+                                    type="email"
+                                    required
+                                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                    value={newUser.email}
+                                    onChange={e => setNewUser({ ...newUser, email: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                                <input
+                                    type="text"
+                                    required
+                                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                    value={newUser.phone}
+                                    onChange={e => setNewUser({ ...newUser, phone: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                                <select
+                                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                    value={newUser.role}
+                                    onChange={e => setNewUser({ ...newUser, role: e.target.value })}
+                                >
+                                    <option value="user">User</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                                <input
+                                    type="password"
+                                    placeholder="Default: 123456"
+                                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                                    value={newUser.password}
+                                    onChange={e => setNewUser({ ...newUser, password: e.target.value })}
+                                />
+                            </div>
+                            <div className="flex justify-end gap-3 mt-6">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowCreateModal(false)}
+                                    className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
+                                >
+                                    Create User
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+        </div>
     );
 };
 
