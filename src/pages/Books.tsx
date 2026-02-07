@@ -14,7 +14,14 @@ interface BookData {
     seller: {
         _id: string;
         name: string;
+        email?: string;
+        phone?: string;
     };
+    condition: string;
+    images: string[];
+    school?: string;
+    classLevel?: string;
+    sellerPhone?: string;
     createdAt: string;
 }
 
@@ -41,6 +48,8 @@ const BooksPage: React.FC = () => {
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
+    const [selectedBook, setSelectedBook] = useState<BookData | null>(null);
     const [imageFile, setImageFile] = useState<File | null>(null);
 
     // Category Management for Form
@@ -51,7 +60,6 @@ const BooksPage: React.FC = () => {
 
     const [newBook, setNewBook] = useState({
         title: '',
-        // author removed
         description: '',
         price: 0,
         category: '', // Stores Name
@@ -62,8 +70,8 @@ const BooksPage: React.FC = () => {
         type: 'sell',
         location: { address: 'Riyadh', lat: 24.7136, lng: 46.6753 },
         school: '',
-        board: '',
-        classLevel: ''
+        classLevel: '',
+        sellerPhone: '' // Custom seller phone number
     });
 
     useEffect(() => {
@@ -170,7 +178,8 @@ const BooksPage: React.FC = () => {
                 subcategory: '', subcategoryId: 0,
                 condition: 'good', type: 'sell',
                 location: { address: 'Riyadh', lat: 24.7136, lng: 46.6753 },
-                school: '', board: '', classLevel: ''
+                school: '', classLevel: '',
+                sellerPhone: ''
             });
             setSelectedMainCat('');
             setImageFile(null);
@@ -346,6 +355,16 @@ const BooksPage: React.FC = () => {
                                         </span>
                                     </td>
                                     <td className="py-4 px-6 flex items-center gap-2">
+                                        <button
+                                            onClick={() => {
+                                                setSelectedBook(book);
+                                                setIsDetailDrawerOpen(true);
+                                            }}
+                                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-all"
+                                            title="View Details"
+                                        >
+                                            <BookOpen size={18} />
+                                        </button>
                                         {book.status === 'available' && (
                                             <button
                                                 onClick={() => handleMarkSold(book._id)}
@@ -411,7 +430,17 @@ const BooksPage: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="flex justify-end pt-3 border-t border-gray-50">
+                        <div className="flex justify-end pt-3 border-t border-gray-50 gap-2">
+                            <button
+                                onClick={() => {
+                                    setSelectedBook(book);
+                                    setIsDetailDrawerOpen(true);
+                                }}
+                                className="flex items-center text-blue-600 hover:text-blue-700 text-sm font-medium px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors"
+                            >
+                                <BookOpen size={16} className="mr-1.5" />
+                                Details
+                            </button>
                             <button
                                 onClick={() => handleDelete(book._id)}
                                 className="flex items-center text-red-500 hover:text-red-700 text-sm font-medium px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors"
@@ -453,6 +482,7 @@ const BooksPage: React.FC = () => {
             {/* Add Book Modal with Transparent Overlay */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
+                    {/* ... modal content ... */}
                     <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden transform transition-all scale-100 border border-gray-100">
                         <div className="px-8 py-5 border-b border-gray-100 bg-gray-50/80 flex justify-between items-center">
                             <h2 className="text-xl font-bold text-gray-800">Add New Book</h2>
@@ -479,11 +509,12 @@ const BooksPage: React.FC = () => {
                                 {/* Author removed */}
 
                                 {/* Price */}
-                                <div>
+                                <div className={newBook.type === 'swap' || newBook.type === 'donate' ? 'opacity-50' : ''}>
                                     <label className="block text-gray-700 text-sm font-bold mb-2">Price (SAR)</label>
                                     <input
                                         type="number"
-                                        required
+                                        required={newBook.type === 'sell' || newBook.type === 'rent'}
+                                        disabled={newBook.type === 'swap' || newBook.type === 'donate'}
                                         min="0"
                                         className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
                                         value={newBook.price}
@@ -503,6 +534,22 @@ const BooksPage: React.FC = () => {
                                         <option value="like_new">Like New</option>
                                         <option value="good">Good</option>
                                         <option value="fair">Fair</option>
+                                        <option value="poor">Poor</option>
+                                    </select>
+                                </div>
+
+                                {/* Listing Type */}
+                                <div>
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">Listing Type</label>
+                                    <select
+                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all bg-white"
+                                        value={newBook.type}
+                                        onChange={e => setNewBook({ ...newBook, type: e.target.value })}
+                                    >
+                                        <option value="sell">Sell</option>
+                                        <option value="rent">Rent</option>
+                                        <option value="swap">Swap</option>
+                                        <option value="donate">Donate</option>
                                     </select>
                                 </div>
 
@@ -543,27 +590,17 @@ const BooksPage: React.FC = () => {
                                 </div>
 
                                 {/* School/Board/Class (Optional) */}
-                                <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-gray-100 pt-4 mt-2">
-                                    <div className="md:col-span-3 text-sm font-semibold text-gray-800 mb-2">School / Textbook Details (Optional)</div>
+                                <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-100 pt-4 mt-2">
+                                    <div className="md:col-span-2 text-sm font-semibold text-gray-800 mb-2">School / Textbook Details (Optional)</div>
 
                                     <div>
-                                        <label className="block text-gray-700 text-xs font-bold mb-1">School Name</label>
+                                        <label className="block text-gray-700 text-xs font-bold mb-1">School Name/Board</label>
                                         <input
                                             type="text"
                                             className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 outline-none text-sm"
-                                            value={newBook.school || ''} // Use safe access
+                                            value={newBook.school || ''}
                                             onChange={e => setNewBook({ ...newBook, school: e.target.value })}
-                                            placeholder="e.g. DPS Riyadh"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-gray-700 text-xs font-bold mb-1">Board</label>
-                                        <input
-                                            type="text"
-                                            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 outline-none text-sm"
-                                            value={newBook.board || ''}
-                                            onChange={e => setNewBook({ ...newBook, board: e.target.value })}
-                                            placeholder="e.g. CBSE / IGCSE"
+                                            placeholder="e.g. DPS Riyadh / CBSE"
                                         />
                                     </div>
                                     <div>
@@ -594,6 +631,19 @@ const BooksPage: React.FC = () => {
                                         />
                                     </div>
                                     <p className="text-xs text-gray-400 mt-2">Recommended: 400x600px, Max 2MB.</p>
+                                </div>
+
+                                {/* Seller Phone Number */}
+                                <div className="md:col-span-2 border-t border-gray-100 pt-4">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2">Custom Seller Phone (Optional)</label>
+                                    <input
+                                        type="text"
+                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
+                                        value={newBook.sellerPhone}
+                                        onChange={e => setNewBook({ ...newBook, sellerPhone: e.target.value })}
+                                        placeholder="e.g. +96650XXXXXXX (Overrides admin phone)"
+                                    />
+                                    <p className="text-[10px] text-gray-400 mt-1 uppercase font-bold">Leave blank to use default seller info</p>
                                 </div>
 
                                 {/* Description */}
@@ -628,6 +678,166 @@ const BooksPage: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            {/* Book Detail Side Drawer */}
+            <div className={`fixed inset-0 z-50 overflow-hidden transition-opacity duration-300 ${isDetailDrawerOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsDetailDrawerOpen(false)} />
+                <div className={`absolute inset-y-0 right-0 max-w-xl w-full bg-white shadow-2xl transform transition-transform duration-300 ease-in-out ${isDetailDrawerOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+                    {selectedBook && (
+                        <div className="h-full flex flex-col">
+                            {/* Drawer Header */}
+                            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                                <h2 className="text-lg font-bold text-gray-800">Book Details</h2>
+                                <button onClick={() => setIsDetailDrawerOpen(false)} className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-200 rounded-full transition-colors">
+                                    ✕
+                                </button>
+                            </div>
+
+                            {/* Drawer Content */}
+                            <div className="flex-1 overflow-y-auto p-6">
+                                {/* Image Hero */}
+                                <div className="w-full h-80 bg-gray-100 rounded-2xl overflow-hidden mb-6 shadow-inner border border-gray-50">
+                                    {selectedBook.images && selectedBook.images.length > 0 ? (
+                                        <img
+                                            src={selectedBook.images[0]?.startsWith('http') ? selectedBook.images[0] : `http://localhost:5001${selectedBook.images[0]}`}
+                                            alt={selectedBook.title}
+                                            className="w-full h-full object-contain"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 gap-3">
+                                            <BookOpen size={64} strokeWidth={1} />
+                                            <span className="text-sm">No image available</span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Main Info */}
+                                <div className="mb-8">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <h3 className="text-2xl font-bold text-gray-900 leading-tight flex-1">{selectedBook.title}</h3>
+                                        <span className={`ml-4 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${selectedBook.status === 'available' ? 'bg-green-100 text-green-700' :
+                                            selectedBook.status === 'sold' ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'
+                                            }`}>
+                                            {selectedBook.status}
+                                        </span>
+                                    </div>
+                                    <p className="text-3xl font-black text-blue-600 mb-4">
+                                        {selectedBook.type === 'sell' || selectedBook.type === 'rent' ? `SAR ${selectedBook.price}` : <span className="text-green-600">FREE</span>}
+                                    </p>
+
+                                    <div className="flex flex-wrap gap-2 mb-6">
+                                        <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-lg text-sm font-medium capitalize flex items-center gap-1.5">
+                                            <Folder size={14} /> {selectedBook.category}
+                                        </span>
+                                        {selectedBook.subcategory && (
+                                            <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-lg text-sm font-medium capitalize">
+                                                {selectedBook.subcategory}
+                                            </span>
+                                        )}
+                                        <span className="bg-orange-50 text-orange-700 px-3 py-1 rounded-lg text-sm font-medium uppercase tracking-tight">
+                                            {selectedBook.type}
+                                        </span>
+                                        <span className="bg-purple-50 text-purple-700 px-3 py-1 rounded-lg text-sm font-medium capitalize">
+                                            Cond: {selectedBook.condition.replace('_', ' ')}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Description Section */}
+                                <div className="mb-8 bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                                    <h4 className="text-sm font-bold text-gray-800 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <div className="w-1.5 h-1.5 bg-blue-600 rounded-full" /> Description
+                                    </h4>
+                                    <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap">
+                                        {selectedBook.description || "No description provided."}
+                                    </p>
+                                </div>
+
+                                {/* Additional Details Grid */}
+                                <div className="grid grid-cols-1 gap-4 mb-8">
+                                    {(selectedBook.school || selectedBook.classLevel) && (
+                                        <div className="border border-gray-100 rounded-2xl p-5">
+                                            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Academic Context</h4>
+                                            <div className="space-y-4">
+                                                {selectedBook.school && (
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                                                            <Plus size={20} />
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-[10px] text-gray-400 uppercase font-bold">School/Board</p>
+                                                            <p className="text-sm font-semibold text-gray-800">{selectedBook.school}</p>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {selectedBook.classLevel && (
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600">
+                                                            <BookOpen size={20} />
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-[10px] text-gray-400 uppercase font-bold">Class/Level</p>
+                                                            <p className="text-sm font-semibold text-gray-800">{selectedBook.classLevel}</p>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Seller Details */}
+                                    <div className="border border-gray-100 rounded-2xl p-5 bg-white shadow-sm">
+                                        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Seller Information</h4>
+                                        <div className="flex items-center gap-4 mb-4">
+                                            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg shadow-sm">
+                                                {selectedBook.seller?.name?.charAt(0) || 'U'}
+                                            </div>
+                                            <div>
+                                                <p className="font-bold text-gray-900">{selectedBook.seller?.name || 'Unknown Seller'}</p>
+                                                <p className="text-xs text-gray-500">Member since {new Date(selectedBook.createdAt).toLocaleDateString()}</p>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            {selectedBook.sellerPhone && (
+                                                <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
+                                                    <span className="font-bold text-gray-400">Phone:</span>
+                                                    <span className="font-mono">{selectedBook.sellerPhone}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Drawer Footer Actions */}
+                            <div className="p-6 border-t border-gray-100 flex gap-4 bg-white shadow-[0_-10px_30px_rgba(0,0,0,0.02)]">
+                                {selectedBook.status === 'available' && (
+                                    <button
+                                        onClick={() => {
+                                            handleMarkSold(selectedBook._id);
+                                            setIsDetailDrawerOpen(false);
+                                        }}
+                                        className="flex-1 bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
+                                    >
+                                        Mark as Sold
+                                    </button>
+                                )}
+                                <button
+                                    onClick={() => {
+                                        if (window.confirm('Delete this book permanently?')) {
+                                            handleDelete(selectedBook._id);
+                                            setIsDetailDrawerOpen(false);
+                                        }
+                                    }}
+                                    className="px-6 py-3 border border-red-100 text-red-600 font-bold rounded-xl hover:bg-red-50 transition-all"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     );
 };
