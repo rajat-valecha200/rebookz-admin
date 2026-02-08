@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import logoHorizontal from '../assets/logo-horizontal.png';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, BookOpen, Users, LogOut, Tags, Moon, Sun, Menu, MessageSquare } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Users, LogOut, Tags, Moon, Sun, MessageSquare } from 'lucide-react';
 
 const Layout: React.FC = () => {
     const { logout, user } = useAuth();
@@ -24,9 +25,6 @@ const Layout: React.FC = () => {
         { path: '/admin/support', icon: <MessageSquare size={20} />, label: 'Support' },
     ];
 
-    const themeClasses = isDarkMode
-        ? 'bg-[#1a1a1a] text-gray-200 border-gray-700'
-        : 'bg-white text-gray-600 border-gray-100';
 
     const mainBg = isDarkMode ? 'bg-[#111]' : 'bg-gray-50';
 
@@ -35,10 +33,7 @@ const Layout: React.FC = () => {
             {/* Desktop Sidebar */}
             <aside className={`hidden md:flex flex-col w-64 shadow-lg z-20 transition-colors duration-300 ${isDarkMode ? 'bg-[#1a1a1a] border-r border-gray-800' : 'bg-white border-r border-gray-100'}`}>
                 <div className={`p-6 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
-                    <h2 className="text-2xl font-bold flex items-center gap-2" style={{ color: colors.primary }}>
-                        <BookOpen size={28} />
-                        ReBookz
-                    </h2>
+                    <img src={logoHorizontal} alt="ReBookz" className="h-10 mb-1" />
                     <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Admin Panel</p>
                 </div>
 
@@ -98,8 +93,7 @@ const Layout: React.FC = () => {
             {/* Mobile Header */}
             <header className={`md:hidden fixed top-0 w-full h-16 z-40 px-4 flex items-center justify-between shadow-sm transition-colors duration-300 ${isDarkMode ? 'bg-[#1a1a1a] border-b border-gray-800' : 'bg-white border-b border-gray-100'}`}>
                 <div className="flex items-center gap-2">
-                    <BookOpen size={24} style={{ color: colors.primary }} />
-                    <span className="text-xl font-bold" style={{ color: colors.primary }}>ReBookz</span>
+                    <img src={logoHorizontal} alt="ReBookz" className="h-8" />
                 </div>
                 <div className="flex items-center gap-3">
                     <button
@@ -136,7 +130,7 @@ const Layout: React.FC = () => {
                                 }`}
                             style={{ color: isActive ? colors.primary : undefined }}
                         >
-                            {React.cloneElement(item.icon as React.ReactElement, { size: 24, strokeWidth: isActive ? 2.5 : 2 })}
+                            {React.cloneElement(item.icon as React.ReactElement<any>, { size: 24, strokeWidth: isActive ? 2.5 : 2 })}
                             {/* <span className="text-[10px] font-medium mt-1">{item.label}</span>  Optional: Hide labels for cleaner look */}
                         </Link>
                     );

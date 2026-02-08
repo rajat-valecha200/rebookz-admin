@@ -10,6 +10,8 @@ import Users from './pages/Users';
 import Books from './pages/Books';
 import Categories from './pages/Categories';
 import Support from './pages/SupportPage';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useAuth();
@@ -30,6 +32,8 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
 
           <Route path="/admin" element={
             <ProtectedRoute>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
-import { MessageSquare, CheckCircle, Clock } from 'lucide-react';
+import { Clock } from 'lucide-react';
 
 interface Ticket {
     _id: string;
@@ -61,6 +61,9 @@ const SupportPage: React.FC = () => {
                                         <div className="font-medium text-gray-800">{ticket.user?.name || 'Guest'}</div>
                                         <div className="text-xs text-gray-400">
                                             {ticket.contactEmail || ticket.user?.email || 'No email'}
+                                        </div>
+                                        <div className="text-[10px] text-blue-600 font-bold mt-1">
+                                            {ticket.contactPhone || ticket.user?.phone || 'No phone'}
                                         </div>
                                     </td>
                                     <td className="py-3 px-4 text-sm text-gray-600 font-medium">

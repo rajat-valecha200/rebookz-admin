@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
-import { Trash2, BookOpen, Plus, Folder } from 'lucide-react';
+import { Trash2, BookOpen, Plus, Folder, Smartphone, Mail } from 'lucide-react';
 
 interface BookData {
     _id: string;
@@ -333,7 +333,13 @@ const BooksPage: React.FC = () => {
                                         </div>
                                     </td>
                                     <td className="py-4 px-6 text-gray-600">
-                                        <div className="text-sm">{book.seller?.name || 'Unknown'}</div>
+                                        <div className="text-sm font-medium text-gray-800">{book.seller?.name || 'Unknown'}</div>
+                                        <div className="text-[10px] text-gray-400 mt-0.5 truncate max-w-[150px]">
+                                            {book.sellerPhone || book.seller?.phone || 'No phone'}
+                                        </div>
+                                        <div className="text-[10px] text-gray-400 truncate max-w-[150px]">
+                                            {book.seller?.email || 'No email'}
+                                        </div>
                                     </td>
                                     <td className="py-4 px-6">
                                         <div className="flex flex-col gap-1">
@@ -798,12 +804,28 @@ const BooksPage: React.FC = () => {
                                             </div>
                                         </div>
                                         <div className="space-y-2">
-                                            {selectedBook.sellerPhone && (
-                                                <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
-                                                    <span className="font-bold text-gray-400">Phone:</span>
-                                                    <span className="font-mono">{selectedBook.sellerPhone}</span>
+                                            <div className="flex items-center gap-3 text-sm text-gray-600 bg-gray-50 p-3 rounded-xl border border-gray-100/50">
+                                                <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-blue-600 shadow-sm">
+                                                    <Smartphone size={16} />
                                                 </div>
-                                            )}
+                                                <div className="flex-1">
+                                                    <p className="text-[10px] text-gray-400 uppercase font-black">Phone Number</p>
+                                                    <a href={`tel:${selectedBook.sellerPhone || selectedBook.seller?.phone}`} className="font-bold text-gray-800 hover:text-blue-600 transition-colors">
+                                                        {selectedBook.sellerPhone || selectedBook.seller?.phone || 'N/A'}
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-3 text-sm text-gray-600 bg-gray-50 p-3 rounded-xl border border-gray-100/50">
+                                                <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-blue-600 shadow-sm">
+                                                    <Mail size={16} />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="text-[10px] text-gray-400 uppercase font-black">Email Address</p>
+                                                    <a href={`mailto:${selectedBook.seller?.email}`} className="font-bold text-gray-800 hover:text-blue-600 transition-colors">
+                                                        {selectedBook.seller?.email || 'N/A'}
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

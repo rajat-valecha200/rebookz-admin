@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import logoHorizontal from '../assets/logo-horizontal.png';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, BookOpen, AlertCircle, ArrowRight } from 'lucide-react';
@@ -34,19 +35,16 @@ const Login: React.FC = () => {
             <div className="w-full max-w-md p-4 relative z-10 animate-in fade-in zoom-in duration-500">
                 <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-blue-100 overflow-hidden border border-gray-100">
                     {/* Header */}
-                    <div className="bg-gradient-to-br from-blue-700 to-indigo-800 p-10 text-center text-white relative h-40 flex flex-col items-center justify-center">
-                        <div className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
+                    <div className="bg-gradient-to-br from-blue-700 to-indigo-800 p-6 text-center text-white relative h-48 flex flex-col items-center justify-center">
+                        <div className="absolute inset-0 opacity-5 pointer-events-none overflow-hidden">
                             <div className="grid grid-cols-4 gap-4 rotate-12 -translate-y-10">
                                 {[...Array(12)].map((_, i) => (
                                     <BookOpen key={i} size={40} className="text-white" />
                                 ))}
                             </div>
                         </div>
-                        <div className="bg-white/20 p-4 rounded-3xl backdrop-blur-md mb-4 inline-block shadow-lg border border-white/30">
-                            <BookOpen size={36} className="text-white" />
-                        </div>
-                        <h1 className="text-2xl font-black tracking-tight">System Admin</h1>
-                        <p className="text-blue-100/80 text-xs font-bold uppercase tracking-[0.2em] mt-1">ReBookz Portal</p>
+                        <img src={logoHorizontal} alt="ReBookz" className="h-10 mb-2 relative z-10" />
+                        <h1 className="text-xl font-black tracking-tight relative z-10">System Admin</h1>
                     </div>
 
                     {/* Form Container */}
@@ -94,13 +92,13 @@ const Login: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-between text-xs py-2">
+                            {/* <div className="flex items-center justify-between text-xs py-2">
                                 <label className="flex items-center gap-2 cursor-pointer group">
                                     <input type="checkbox" className="w-4 h-4 rounded-md border-gray-200 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer" />
                                     <span className="text-gray-500 font-bold group-hover:text-gray-700 transition-colors">Keep me signed in</span>
                                 </label>
                                 <a href="#" className="text-blue-600 font-black hover:underline tracking-tight">Forgot Keys?</a>
-                            </div>
+                            </div> */}
 
                             <button
                                 type="submit"

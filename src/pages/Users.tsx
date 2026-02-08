@@ -162,6 +162,58 @@ const UsersPage: React.FC = () => {
                 </div>
             </div>
 
+            {/* Mobile Card View (Small Screens) */}
+            <div className="md:hidden space-y-4">
+                {users.map((user) => (
+                    <div key={user._id} className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
+                                    {user.name?.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-gray-800">{user.name}</h3>
+                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'
+                                        }`}>
+                                        {user.role}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => handleSuspend(user._id, user.isSuspended)}
+                                    className={`p-2 rounded-lg border transition-all ${user.isSuspended ? 'bg-green-50 text-green-600 border-green-200' : 'bg-orange-50 text-orange-600 border-orange-200'}`}
+                                    title={user.isSuspended ? "Activate User" : "Suspend User"}
+                                >
+                                    <User size={16} />
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(user._id)}
+                                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg border border-gray-100 transition-all"
+                                >
+                                    <Trash2 size={16} />
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="space-y-3 pt-3 border-t border-gray-50">
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs text-gray-400 font-bold uppercase">Mobile</span>
+                                <span className="text-sm font-medium text-gray-800">{user.phone || 'N/A'}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs text-gray-400 font-bold uppercase">Email</span>
+                                <span className="text-sm font-medium text-gray-600">{user.email}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs text-gray-400 font-bold uppercase">Joined</span>
+                                <span className="text-xs text-gray-500">{new Date(user.createdAt).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
             {/* Pagination Controls */}
             <div className="flex justify-between items-center mt-6 px-2">
                 <button
