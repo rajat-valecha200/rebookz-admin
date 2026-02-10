@@ -2,7 +2,7 @@ import React from 'react';
 import logoHorizontal from '../assets/logo-horizontal.png';
 import appImage from '../assets/appImage.jpeg';
 import { Link } from 'react-router-dom';
-import { BookOpen, ShieldCheck, Smartphone, Globe, ArrowRight, Star, Search, MessageCircle, Heart, Mail } from 'lucide-react';
+import { BookOpen, ShieldCheck, Smartphone, Globe, ArrowRight, Search, MessageCircle, Heart, Mail } from 'lucide-react';
 
 const LandingPage: React.FC = () => {
     return (

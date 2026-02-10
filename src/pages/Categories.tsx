@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
-import { Trash2, Plus, Folder, ChevronRight, Check } from 'lucide-react';
+import { Trash2, Plus, ChevronRight } from 'lucide-react';
 // Import Ionicons from react-icons
 import {
     IoBookOutline, IoLibraryOutline, IoSchoolOutline, IoBriefcaseOutline,
