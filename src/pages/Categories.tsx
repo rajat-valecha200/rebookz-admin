@@ -229,7 +229,14 @@ const CategoriesPage: React.FC = () => {
                                 {renderIcon(category.icon_name)}
                             </div>
                             <div>
-                                <h3 className="font-semibold text-lg text-gray-800">{category.name}</h3>
+                                <div className="flex items-center gap-2">
+                                    <h3 className="font-semibold text-lg text-gray-800">{category.name}</h3>
+                                    {!category.is_active && (
+                                        <span className="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">
+                                            Inactive
+                                        </span>
+                                    )}
+                                </div>
                                 {category.description && (
                                     <p className="text-xs text-gray-400 truncate max-w-[150px]">{category.description}</p>
                                 )}

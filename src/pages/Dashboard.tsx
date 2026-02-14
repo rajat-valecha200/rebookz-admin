@@ -45,10 +45,10 @@ const Dashboard: React.FC = () => {
     );
 
     const quickActions = [
-        { title: 'Add New Book', icon: <PlusCircle size={20} />, link: '/books', color: 'bg-blue-500', hover: 'hover:bg-blue-600' },
-        { title: 'Manage Users', icon: <Users size={20} />, link: '/users', color: 'bg-emerald-500', hover: 'hover:bg-emerald-600' },
-        { title: 'Support Tickets', icon: <MessageSquare size={20} />, link: '/support', color: 'bg-purple-500', hover: 'hover:bg-purple-600' },
-        { title: 'Categories', icon: <LayoutGrid size={20} />, link: '/categories', color: 'bg-orange-500', hover: 'hover:bg-orange-600' },
+        { title: 'Add New Book', icon: <PlusCircle size={20} />, link: 'books', color: 'bg-blue-500', hover: 'hover:bg-blue-600' },
+        { title: 'Manage Users', icon: <Users size={20} />, link: 'users', color: 'bg-emerald-500', hover: 'hover:bg-emerald-600' },
+        { title: 'Support Tickets', icon: <MessageSquare size={20} />, link: 'support', color: 'bg-purple-500', hover: 'hover:bg-purple-600' },
+        { title: 'Categories', icon: <LayoutGrid size={20} />, link: 'categories', color: 'bg-orange-500', hover: 'hover:bg-orange-600' },
     ];
 
     return (
@@ -153,7 +153,7 @@ const Dashboard: React.FC = () => {
                         <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
                             <BookOpen size={20} className="text-blue-500" /> Recent Listings
                         </h2>
-                        <Link to="/books" className="text-blue-600 text-sm font-bold hover:underline py-1 px-2">View All</Link>
+                        <Link to="books" className="text-blue-600 text-sm font-bold hover:underline py-1 px-2">View All</Link>
                     </div>
                     <div className="overflow-x-auto p-2">
                         <table className="w-full text-left">
@@ -224,7 +224,7 @@ const Dashboard: React.FC = () => {
                             ))}
                             {!stats?.recentUsers?.length && <div className="py-8 text-center text-gray-400 italic text-sm">No new signups</div>}
                         </div>
-                        <Link to="/users" className="block text-center py-4 text-xs font-black text-emerald-600 bg-emerald-50/50 hover:bg-emerald-50 transition-colors uppercase tracking-widest mt-auto border-t border-emerald-100/50">
+                        <Link to="users" className="block text-center py-4 text-xs font-black text-emerald-600 bg-emerald-50/50 hover:bg-emerald-50 transition-colors uppercase tracking-widest mt-auto border-t border-emerald-100/50">
                             See All Users
                         </Link>
                     </div>
@@ -234,7 +234,7 @@ const Dashboard: React.FC = () => {
                         <div className="relative z-10">
                             <h4 className="font-black text-lg mb-1">Support Active</h4>
                             <p className="text-indigo-100 text-sm mb-4 opacity-80">There are {stats?.totalRequests || 0} unanswered messages requiring attention.</p>
-                            <Link to="/support" className="inline-flex items-center gap-2 bg-white text-indigo-600 rounded-xl px-4 py-2 text-xs font-black hover:bg-indigo-50 transition-all group-hover:gap-3 shadow-lg">
+                            <Link to="support" className="inline-flex items-center gap-2 bg-white text-indigo-600 rounded-xl px-4 py-2 text-xs font-black hover:bg-indigo-50 transition-all group-hover:gap-3 shadow-lg">
                                 Manage Requests <ArrowRight size={14} />
                             </Link>
                         </div>

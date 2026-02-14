@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import api from '../services/api';
+import api, { SERVER_URL } from '../services/api';
 import { Trash2, BookOpen, Plus, Folder, Smartphone, Mail } from 'lucide-react';
 
 interface BookData {
@@ -160,6 +160,11 @@ const BooksPage: React.FC = () => {
 
                 // FIXED: Extract image path correctly from response object
                 imageUrl = uploadRes.data.image;
+            }
+
+            if (!imageFile) {
+                alert('Please upload a book cover image');
+                return;
             }
 
             await api.post('/books', {
@@ -705,7 +710,7 @@ const BooksPage: React.FC = () => {
                                 <div className="w-full h-80 bg-gray-100 rounded-2xl overflow-hidden mb-6 shadow-inner border border-gray-50">
                                     {selectedBook.images && selectedBook.images.length > 0 ? (
                                         <img
-                                            src={selectedBook.images[0]?.startsWith('http') ? selectedBook.images[0] : `http://localhost:5001${selectedBook.images[0]}`}
+                                            src={selectedBook.images[0]?.startsWith('http') ? selectedBook.images[0] : `${SERVER_URL}${selectedBook.images[0]}`}
                                             alt={selectedBook.title}
                                             className="w-full h-full object-contain"
                                         />

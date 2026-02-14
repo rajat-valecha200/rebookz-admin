@@ -20,30 +20,31 @@ const LandingPage: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <Link to="/login" className="bg-blue-600 text-white px-6 py-2.5 rounded-full font-black text-sm shadow-xl shadow-blue-200 hover:bg-blue-700 hover:-translate-y-0.5 transition-all active:scale-95">
-                            Admin Login
-                        </Link>
+                        <button className="bg-blue-600 text-white px-6 py-2.5 rounded-full font-black text-sm shadow-xl shadow-blue-200 hover:bg-blue-700 hover:-translate-y-0.5 transition-all active:scale-95">
+                            Download App
+                        </button>
                     </div>
                 </div>
             </nav>
 
             {/* Hero Section */}
             <main className="flex-1">
-                <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-50/50 via-white to-white">
+                <section className="relative pt-32 pb-20 lg:pt-32 lg:pb-32 overflow-hidden bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-50/50 via-white to-white">
                     {/* Background Accents */}
                     <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[600px] h-[600px] bg-blue-100/30 rounded-full blur-[120px] -z-10" />
                     <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-indigo-50/50 rounded-full blur-[100px] -z-10" />
 
                     <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-16 lg:gap-24 relative z-10">
                         <div className="flex-1 space-y-8 text-center lg:text-left">
-                            <div className="inline-flex items-center gap-2 bg-blue-600/5 text-blue-600 px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest border border-blue-600/10 backdrop-blur-sm animate-fade-in">
+                            <div className="inline-flex items-center gap-2 bg-blue-600/5 text-blue-600 px-4 py-2 rounded-full text-xs font-black capitalize tracking-widest border border-blue-600/10 backdrop-blur-sm animate-fade-in">
                                 <span className="flex h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
-                                <span>A user friendly book community</span>
+                                <span>Where used books find new readers</span>
                             </div>
 
-                            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-gray-900 leading-[1.05] tracking-tight">
-                                Your favorite <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">book finds.</span>
+                            <h1 className="text-5xl font-black text-gray-900 leading-[1.05] tracking-tight">
+                                A Trusted Platform to<br />
+                                <span className="text-5xl md:text-6xl lg:text-7xl text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Buy, Sell & Donate</span><br />
+                                Used Books
                             </h1>
 
                             <p className="text-xl md:text-2xl text-gray-500 font-medium max-w-2xl mx-auto lg:mx-0 leading-relaxed lg:pr-10">
