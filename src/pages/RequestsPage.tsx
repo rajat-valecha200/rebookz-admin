@@ -301,12 +301,12 @@ const RequestsPage: React.FC = () => {
                                 </div>
 
                                 {/* Price */}
-                                <div className={newBook.type === 'swap' || newBook.type === 'donate' ? 'opacity-50' : ''}>
+                                <div className={newBook.type === 'donate' ? 'opacity-50' : ''}>
                                     <label className="block text-gray-700 text-sm font-bold mb-2">Price (SAR)</label>
                                     <input
                                         type="number"
-                                        required={newBook.type === 'sell' || newBook.type === 'rent'}
-                                        disabled={newBook.type === 'swap' || newBook.type === 'donate'}
+                                        required={newBook.type === 'sell'}
+                                        disabled={newBook.type === 'donate'}
                                         min="0"
                                         className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 outline-none transition-all"
                                         value={newBook.price}
@@ -339,8 +339,6 @@ const RequestsPage: React.FC = () => {
                                         onChange={e => setNewBook({ ...newBook, type: e.target.value })}
                                     >
                                         <option value="sell">Sell</option>
-                                        <option value="rent">Rent</option>
-                                        <option value="swap">Swap</option>
                                         <option value="donate">Donate</option>
                                     </select>
                                 </div>
