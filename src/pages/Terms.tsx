@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Shield, CheckCircle2, AlertTriangle, Scale, Mail } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, AlertTriangle, Scale, Mail } from 'lucide-react';
 import logoHorizontal from '../assets/logo-horizontal.png';
 
 const Terms: React.FC = () => {

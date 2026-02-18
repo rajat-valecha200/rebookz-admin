@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ShieldCheck, Lock, Smartphone, Database, Trash2, Mail, Bell, Globe, UserCheck, Shield, Camera, Phone } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, Lock, Smartphone, Database, Trash2, Mail, Globe, UserCheck, Shield, Camera, Phone } from 'lucide-react';
 import logoHorizontal from '../assets/logo-horizontal.png';
 
 const PrivacyIOS: React.FC = () => {
