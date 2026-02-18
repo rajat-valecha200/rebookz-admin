@@ -234,8 +234,8 @@ const LandingPage: React.FC = () => {
                         <div className="space-y-6">
                             <h4 className="text-sm font-black text-gray-900 uppercase tracking-widest">Support</h4>
                             <ul className="space-y-4 text-sm font-bold text-gray-500">
-                                <li><a href="mailto:support@rebookz.com" className="flex items-center gap-3 justify-center md:justify-start hover:text-blue-600 transition-colors">
-                                    <Mail size={18} /> support@rebookz.com
+                                <li><a href="mailto:info.rebookz@gmail.com" className="flex items-center gap-3 justify-center md:justify-start hover:text-blue-600 transition-colors">
+                                    <Mail size={18} /> info.rebookz@gmail.com
                                 </a></li>
                             </ul>
                         </div>
