@@ -10,3 +10,5 @@ export { default as LandingPage } from './LandingPage';
 export { default as Terms } from './Terms';
 export { default as Privacy } from './Privacy';
 export { default as GuestBookDetails } from './GuestBookDetails';
+export { default as Admins } from './Admins';
+export { default as Settings } from './Settings';

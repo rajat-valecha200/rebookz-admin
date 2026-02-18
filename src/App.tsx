@@ -14,7 +14,9 @@ import {
   FeedbackPage as Feedback,
   Terms,
   Privacy,
-  GuestBookDetails
+  GuestBookDetails,
+  Admins,
+  Settings
 } from './pages';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -52,6 +54,8 @@ function App() {
             <Route path="requests" element={<Requests />} />
             <Route path="support" element={<Support />} />
             <Route path="feedback" element={<Feedback />} />
+            <Route path="admins" element={<Admins />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>
       </Router>

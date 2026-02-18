@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import logoHorizontal from '../assets/logo-horizontal.png';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, BookOpen, Users, LogOut, Tags, Moon, Sun, MessageSquare, Bell, TrendingUp } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Users, LogOut, Tags, Moon, Sun, MessageSquare, Bell, TrendingUp, ShieldCheck, Settings } from 'lucide-react';
 
 const Layout: React.FC = () => {
     const { logout, user } = useAuth();
@@ -25,6 +25,8 @@ const Layout: React.FC = () => {
         { path: '/admin/requests', icon: <Bell size={20} />, label: 'Requested Books' },
         { path: '/admin/support', icon: <MessageSquare size={20} />, label: 'Support' },
         { path: '/admin/feedback', icon: <TrendingUp size={20} />, label: 'Feedback' },
+        { path: '/admin/admins', icon: <ShieldCheck size={20} />, label: 'Admins' },
+        { path: '/admin/settings', icon: <Settings size={20} />, label: 'Settings' },
     ];
 
 
