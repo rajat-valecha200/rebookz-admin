@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import logoHorizontal from '../assets/logo-horizontal.png';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, BookOpen, Users, LogOut, Tags, Moon, Sun, MessageSquare, Bell, TrendingUp, ShieldCheck, Settings } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Users, LogOut, Tags, Moon, Sun, MessageSquare, Bell, TrendingUp, ShieldCheck, Settings, Menu, X } from 'lucide-react';
 
 const Layout: React.FC = () => {
     const { logout, user } = useAuth();
     const location = useLocation();
     const [isDarkMode, setIsDarkMode] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const isSuperAdmin = user?.email === 'rajatvalecha@rebookz.com';
 
     // App Theme Colors
     const colors = {
@@ -25,8 +28,17 @@ const Layout: React.FC = () => {
         { path: '/admin/requests', icon: <Bell size={20} />, label: 'Requested Books' },
         { path: '/admin/support', icon: <MessageSquare size={20} />, label: 'Support' },
         { path: '/admin/feedback', icon: <TrendingUp size={20} />, label: 'Feedback' },
-        { path: '/admin/admins', icon: <ShieldCheck size={20} />, label: 'Admins' },
-        { path: '/admin/settings', icon: <Settings size={20} />, label: 'Settings' },
+        ...(isSuperAdmin ? [
+            { path: '/admin/admins', icon: <ShieldCheck size={20} />, label: 'Admins' },
+            { path: '/admin/settings', icon: <Settings size={20} />, label: 'Settings' }
+        ] : []),
+    ];
+
+    const mobileMenuItems = [
+        { path: '/admin', icon: <LayoutDashboard size={20} />, label: 'Home' },
+        { path: '/admin/books', icon: <BookOpen size={20} />, label: 'Books' },
+        { path: '/admin/requests', icon: <Bell size={20} />, label: 'Requests' },
+        { path: '/admin/support', icon: <MessageSquare size={20} />, label: 'Support' },
     ];
 
 
@@ -34,14 +46,27 @@ const Layout: React.FC = () => {
 
     return (
         <div className={`flex h-screen w-full transition-colors duration-300 ${mainBg}`}>
-            {/* Desktop Sidebar */}
-            <aside className={`hidden md:flex flex-col w-64 shadow-lg z-20 transition-colors duration-300 ${isDarkMode ? 'bg-[#1a1a1a] border-r border-gray-800' : 'bg-white border-r border-gray-100'}`}>
-                <div className={`p-6 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
-                    <img src={logoHorizontal} alt="ReBookz" className="h-10 mb-1" />
-                    <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Admin Panel</p>
+            {/* Sidebar Overlay */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-30 md:hidden backdrop-blur-sm"
+                    onClick={() => setIsSidebarOpen(false)}
+                />
+            )}
+
+            {/* Sidebar */}
+            <aside className={`fixed md:static inset-y-0 left-0 w-64 shadow-lg z-40 transition-all duration-300 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} flex flex-col ${isDarkMode ? 'bg-[#1a1a1a] border-r border-gray-800' : 'bg-white border-r border-gray-100'}`}>
+                <div className={`p-6 border-b flex items-center justify-between ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+                    <div>
+                        <img src={logoHorizontal} alt="ReBookz" className="h-10 mb-1" />
+                        <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Admin Panel</p>
+                    </div>
+                    <button onClick={() => setIsSidebarOpen(false)} className="md:hidden p-2 text-gray-400 hover:text-gray-600">
+                        <X size={24} />
+                    </button>
                 </div>
 
-                <nav className="flex-1 p-4">
+                <nav className="flex-1 overflow-y-auto p-4 custom-scrollbar">
                     <ul className="space-y-2">
                         {menuItems.map((item) => {
                             const isActive = location.pathname === item.path;
@@ -49,6 +74,7 @@ const Layout: React.FC = () => {
                                 <li key={item.path}>
                                     <Link
                                         to={item.path}
+                                        onClick={() => setIsSidebarOpen(false)}
                                         className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
                                             ? 'font-medium shadow-sm'
                                             : isDarkMode ? 'text-gray-400 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-50'
@@ -65,7 +91,7 @@ const Layout: React.FC = () => {
                 </nav>
 
                 <div className={`p-4 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
-                    <div className="flex items-center justify-between mb-6 px-2">
+                    <div className="flex items-center justify-between mb-4 px-2">
                         <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Theme</span>
                         <button
                             onClick={toggleTheme}
@@ -76,17 +102,17 @@ const Layout: React.FC = () => {
                     </div>
 
                     <div className={`flex items-center space-x-3 px-4 py-3 mb-2 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
-                        <div className="rounded-full w-8 h-8 flex items-center justify-center font-bold text-white shadow-sm" style={{ backgroundColor: colors.accent }}>
+                        <div className="flex-shrink-0 rounded-full w-8 h-8 flex items-center justify-center font-bold text-white shadow-sm" style={{ backgroundColor: colors.accent }}>
                             {user?.name?.charAt(0) || 'A'}
                         </div>
                         <div className="overflow-hidden">
                             <p className={`text-sm font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-700'} truncate`}>{user?.name}</p>
-                            <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'} truncate`}>{user?.email}</p>
+                            <p className={`text-[10px] ${isDarkMode ? 'text-gray-500' : 'text-gray-500'} truncate`}>{user?.email}</p>
                         </div>
                     </div>
                     <button
                         onClick={logout}
-                        className="flex items-center justify-center space-x-2 px-4 py-2 w-full text-red-500 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors mt-2"
+                        className="flex items-center justify-center space-x-2 px-4 py-2 w-full text-red-500 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"
                     >
                         <LogOut size={18} />
                         <span>Logout</span>
@@ -95,17 +121,14 @@ const Layout: React.FC = () => {
             </aside>
 
             {/* Mobile Header */}
-            <header className={`md:hidden fixed top-0 w-full h-16 z-40 px-4 flex items-center justify-between shadow-sm transition-colors duration-300 ${isDarkMode ? 'bg-[#1a1a1a] border-b border-gray-800' : 'bg-white border-b border-gray-100'}`}>
+            <header className={`md:hidden fixed top-0 w-full h-16 z-30 px-4 flex items-center justify-between shadow-sm transition-colors duration-300 ${isDarkMode ? 'bg-[#1a1a1a] border-b border-gray-800' : 'bg-white border-b border-gray-100'}`}>
                 <div className="flex items-center gap-2">
+                    <button onClick={() => setIsSidebarOpen(true)} className="p-2 -ml-2 text-gray-400 hover:text-gray-600">
+                        <Menu size={24} />
+                    </button>
                     <img src={logoHorizontal} alt="ReBookz" className="h-8" />
                 </div>
                 <div className="flex items-center gap-3">
-                    <button
-                        onClick={toggleTheme}
-                        className={`p-2 rounded-full transition-colors ${isDarkMode ? 'bg-gray-800 text-yellow-400' : 'bg-gray-100 text-gray-600'}`}
-                    >
-                        {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-                    </button>
                     <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm" style={{ backgroundColor: colors.accent }}>
                         {user?.name?.charAt(0) || 'A'}
                     </div>
@@ -123,8 +146,8 @@ const Layout: React.FC = () => {
             </main>
 
             {/* Mobile Bottom Navigation */}
-            <nav className={`md:hidden fixed bottom-0 w-full h-16 z-40 px-6 flex justify-between items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] transition-colors duration-300 ${isDarkMode ? 'bg-[#1a1a1a] border-t border-gray-800' : 'bg-white border-t border-gray-100'}`}>
-                {menuItems.map((item) => {
+            <nav className={`md:hidden fixed bottom-0 w-full h-16 z-30 px-6 flex justify-between items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] transition-colors duration-300 ${isDarkMode ? 'bg-[#1a1a1a] border-t border-gray-800' : 'bg-white border-t border-gray-100'}`}>
+                {mobileMenuItems.map((item) => {
                     const isActive = location.pathname === item.path;
                     return (
                         <Link
@@ -135,15 +158,15 @@ const Layout: React.FC = () => {
                             style={{ color: isActive ? colors.primary : undefined }}
                         >
                             {React.cloneElement(item.icon as React.ReactElement<any>, { size: 24, strokeWidth: isActive ? 2.5 : 2 })}
-                            {/* <span className="text-[10px] font-medium mt-1">{item.label}</span>  Optional: Hide labels for cleaner look */}
                         </Link>
                     );
                 })}
                 <button
-                    onClick={logout}
-                    className="flex flex-col items-center justify-center p-2 text-gray-400 hover:text-red-500 transition-colors"
+                    onClick={() => setIsSidebarOpen(true)}
+                    className="flex flex-col items-center justify-center p-2 text-gray-400 hover:text-[#2CB5A0] transition-colors"
                 >
-                    <LogOut size={24} />
+                    <Menu size={24} />
+                    {/* <span className="text-[10px] font-medium mt-1">More</span> */}
                 </button>
             </nav>
         </div>
