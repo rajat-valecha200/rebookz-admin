@@ -49,6 +49,15 @@ const Privacy: React.FC = () => {
                         <Lock size={200} className="absolute -right-10 -bottom-10 opacity-10 rotate-12" />
                     </div>
 
+                    <div className="p-10 bg-indigo-50/50 border-b border-indigo-100 flex flex-col md:flex-row gap-4 items-center justify-center">
+                        <Link to="/privacy/ios" className="px-6 py-2 bg-white border border-indigo-200 rounded-full text-indigo-700 font-bold hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
+                            Apple iOS Privacy Policy
+                        </Link>
+                        <Link to="/privacy/android" className="px-6 py-2 bg-white border border-indigo-200 rounded-full text-indigo-700 font-bold hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
+                            Google Android Privacy Policy
+                        </Link>
+                    </div>
+
                     <div className="p-10 md:p-16 space-y-12">
                         {sections.map((item, index) => (
                             <section key={index} className="space-y-4">

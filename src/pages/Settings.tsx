@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
-import { Settings, Lock, Smartphone, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Settings, Lock, Smartphone, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const SettingsPage: React.FC = () => {
@@ -76,20 +76,20 @@ const SettingsPage: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Mobile App Settings */}
-                <div className="space-y-6">
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
-                                <Smartphone size={20} />
+                {/* Mobile App Settings (Super Admin Only) */}
+                {isSuperAdmin && (
+                    <div className="space-y-6">
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
+                                    <Smartphone size={20} />
+                                </div>
+                                <h2 className="text-lg font-bold text-gray-800">Mobile App Control</h2>
                             </div>
-                            <h2 className="text-lg font-bold text-gray-800">Mobile App Control</h2>
-                        </div>
 
-                        <div className={`p-4 rounded-xl border ${isSuperAdmin ? 'border-gray-100 bg-gray-50/50' : 'border-amber-100 bg-amber-50/30'}`}>
-                            <div className="flex items-center justify-between mb-2">
-                                <span className="font-semibold text-gray-700">Demo Mode Login</span>
-                                {isSuperAdmin ? (
+                            <div className="p-4 rounded-xl border border-gray-100 bg-gray-50/50">
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="font-semibold text-gray-700">Demo Mode Login</span>
                                     <button
                                         onClick={() => handleToggleDummyLogin(config.showDummyLogin)}
                                         disabled={saving}
@@ -97,37 +97,29 @@ const SettingsPage: React.FC = () => {
                                     >
                                         <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${config.showDummyLogin ? 'translate-x-6' : 'translate-x-1'}`} />
                                     </button>
-                                ) : (
-                                    <span className={`text-[10px] font-bold uppercase px-2 py-1 rounded bg-amber-100 text-amber-700`}>Restricted</span>
-                                )}
-                            </div>
-                            <p className="text-xs text-gray-500 leading-relaxed">
-                                When enabled, the "Continue as Dummy User" button is visible on the mobile login screen. Turn this off after App Store review is complete.
-                            </p>
-                            {!isSuperAdmin && (
-                                <div className="mt-4 flex items-start gap-2 text-[10px] text-amber-700 font-medium">
-                                    <AlertCircle size={12} className="mt-0.5" />
-                                    <span>Only the Super Admin (rajatvalecha@rebookz.com) can toggle this setting.</span>
                                 </div>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="bg-teal-50/50 p-6 rounded-2xl border border-teal-100">
-                        <div className="flex items-start gap-3">
-                            <CheckCircle2 className="text-[#2CB5A0] mt-1" size={18} />
-                            <div>
-                                <h3 className="font-bold text-teal-800 text-sm">Review Ready</h3>
-                                <p className="text-xs text-teal-700 mt-1 leading-relaxed">
-                                    Your app is configured for store review. Providing a dummy login flow ensures reviewers can test all features without social credentials.
+                                <p className="text-xs text-gray-500 leading-relaxed">
+                                    When enabled, the "Continue as Dummy User" button is visible on the mobile login screen. Turn this off after App Store review is complete.
                                 </p>
                             </div>
                         </div>
+
+                        <div className="bg-teal-50/50 p-6 rounded-2xl border border-teal-100">
+                            <div className="flex items-start gap-3">
+                                <CheckCircle2 className="text-[#2CB5A0] mt-1" size={18} />
+                                <div>
+                                    <h3 className="font-bold text-teal-800 text-sm">Review Ready</h3>
+                                    <p className="text-xs text-teal-700 mt-1 leading-relaxed">
+                                        Your app is configured for store review. Providing a dummy login flow ensures reviewers can test all features without social credentials.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* Security Settings */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div className={`bg-white p-6 rounded-2xl shadow-sm border border-gray-100 ${!isSuperAdmin ? 'md:col-span-2 max-w-2xl mx-auto w-full' : ''}`}>
                     <div className="flex items-center gap-3 mb-6">
                         <div className="p-2 bg-purple-50 rounded-lg text-purple-600">
                             <Lock size={20} />

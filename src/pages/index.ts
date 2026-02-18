@@ -12,3 +12,5 @@ export { default as Privacy } from './Privacy';
 export { default as GuestBookDetails } from './GuestBookDetails';
 export { default as Admins } from './Admins';
 export { default as Settings } from './Settings';
+export { default as PrivacyIOS } from './PrivacyIOS';
+export { default as PrivacyAndroid } from './PrivacyAndroid';

@@ -16,7 +16,9 @@ import {
   Privacy,
   GuestBookDetails,
   Admins,
-  Settings
+  Settings,
+  PrivacyIOS,
+  PrivacyAndroid
 } from './pages';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -40,6 +42,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/privacy/ios" element={<PrivacyIOS />} />
+          <Route path="/privacy/android" element={<PrivacyAndroid />} />
           <Route path="/book/:id" element={<GuestBookDetails />} />
 
           <Route path="/admin" element={
