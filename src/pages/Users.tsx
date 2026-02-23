@@ -265,7 +265,6 @@ const UsersPage: React.FC = () => {
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                                 <input
                                     type="text"
-                                    required
                                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                                     value={newUser.phone}
                                     onChange={e => setNewUser({ ...newUser, phone: e.target.value })}
