@@ -51,6 +51,7 @@ const BooksPage: React.FC = () => {
     const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
     const [selectedBook, setSelectedBook] = useState<BookData | null>(null);
     const [imageFile, setImageFile] = useState<File | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Category Management for Form
     const [allCategories, setAllCategories] = useState<CategoryData[]>([]);
@@ -149,6 +150,13 @@ const BooksPage: React.FC = () => {
 
     const handleAddBook = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!imageFile) {
+            alert('Please upload a book cover image');
+            return;
+        }
+
+        setIsSubmitting(true);
         try {
             let imageUrl = '';
             if (imageFile) {
@@ -188,9 +196,8 @@ const BooksPage: React.FC = () => {
             });
             setSelectedMainCat('');
             setImageFile(null);
-        } catch (error) {
-            console.error('Error adding book:', error);
-            alert('Failed to add book');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -675,9 +682,17 @@ const BooksPage: React.FC = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-6 py-2.5 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all transform hover:-translate-y-0.5"
+                                    disabled={isSubmitting}
+                                    className={`px-6 py-2.5 rounded-lg font-bold shadow-lg transition-all transform hover:-translate-y-0.5 ${isSubmitting ? 'bg-gray-400 cursor-not-allowed opacity-70' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-200'}`}
                                 >
-                                    Add Book
+                                    {isSubmitting ? (
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                            <span>Adding...</span>
+                                        </div>
+                                    ) : (
+                                        'Add Book'
+                                    )}
                                 </button>
                             </div>
                         </form>

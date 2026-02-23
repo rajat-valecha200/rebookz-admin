@@ -30,8 +30,8 @@ const Layout: React.FC = () => {
         { path: '/admin/feedback', icon: <TrendingUp size={20} />, label: 'Feedback' },
         ...(isSuperAdmin ? [
             { path: '/admin/admins', icon: <ShieldCheck size={20} />, label: 'Admins' },
-            { path: '/admin/settings', icon: <Settings size={20} />, label: 'Settings' }
         ] : []),
+        { path: '/admin/settings', icon: <Settings size={20} />, label: 'Settings' }
     ];
 
     const mobileMenuItems = [
