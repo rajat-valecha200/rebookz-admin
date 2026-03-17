@@ -5,7 +5,11 @@ import { useAuth } from '../context/AuthContext';
 
 const SettingsPage: React.FC = () => {
     const { user } = useAuth();
-    const [appSettings, setAppSettings] = useState<{ regions: any[], versionControls: any[] }>({ regions: [], versionControls: [] });
+    const [appSettings, setAppSettings] = useState<{ regions: any[], versionControls: any[], forceUpdate?: any }>({ 
+        regions: [], 
+        versionControls: [],
+        forceUpdate: { ios: { requiredVersion: '', storeUrl: '' }, android: { requiredVersion: '', storeUrl: '' } }
+    });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     
@@ -24,7 +28,8 @@ const SettingsPage: React.FC = () => {
             // The backend needs to return the full versionControls array for the admin to manage it.
             setAppSettings({
                 regions: data.regions || [],
-                versionControls: data.versionControls || []
+                versionControls: data.versionControls || [],
+                forceUpdate: data.forceUpdate || { ios: { requiredVersion: '', storeUrl: '' }, android: { requiredVersion: '', storeUrl: '' } }
             });
         } catch (error) {
             console.error('Error fetching settings:', error);
@@ -42,6 +47,7 @@ const SettingsPage: React.FC = () => {
         try {
             await api.put('/config/app-settings', newSettings);
             setAppSettings(newSettings);
+            alert('Settings updated successfully!');
         } catch (error) {
             alert('Failed to update app settings');
         } finally {
@@ -180,6 +186,81 @@ const SettingsPage: React.FC = () => {
                                 ))}
                                 {appSettings.versionControls?.length === 0 && <p className="text-xs text-gray-400">No version rules defined.</p>}
                             </div>
+                        </div>
+
+                        {/* Force Update Settings */}
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="p-2 bg-red-50 rounded-lg text-red-600">
+                                    <Smartphone size={20} />
+                                </div>
+                                <div>
+                                    <h2 className="text-lg font-bold text-gray-800">Force Update Requirements</h2>
+                                    <p className="text-xs text-gray-500">Force users to update the app if their version is below the required version.</p>
+                                </div>
+                            </div>
+
+                            {appSettings.forceUpdate && (
+                                <div className="space-y-4">
+                                    {/* iOS Settings */}
+                                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                        <h3 className="text-sm font-bold text-gray-700 mb-3 uppercase">iOS App</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="text-xs font-bold text-gray-500">Required Version (e.g. 1.0.2)</label>
+                                                <input 
+                                                    type="text" 
+                                                    value={appSettings.forceUpdate.ios.requiredVersion} 
+                                                    onChange={e => setAppSettings({...appSettings, forceUpdate: { ...appSettings.forceUpdate, ios: { ...appSettings.forceUpdate.ios, requiredVersion: e.target.value } }})} 
+                                                    className="w-full p-2 mt-1 border border-gray-200 rounded-lg text-sm outline-none" 
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="text-xs font-bold text-gray-500">App Store URL</label>
+                                                <input 
+                                                    type="url" 
+                                                    value={appSettings.forceUpdate.ios.storeUrl} 
+                                                    onChange={e => setAppSettings({...appSettings, forceUpdate: { ...appSettings.forceUpdate, ios: { ...appSettings.forceUpdate.ios, storeUrl: e.target.value } }})} 
+                                                    className="w-full p-2 mt-1 border border-gray-200 rounded-lg text-sm outline-none" 
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Android Settings */}
+                                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                        <h3 className="text-sm font-bold text-gray-700 mb-3 uppercase">Android App</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="text-xs font-bold text-gray-500">Required Version (e.g. 1.0.2)</label>
+                                                <input 
+                                                    type="text" 
+                                                    value={appSettings.forceUpdate.android.requiredVersion} 
+                                                    onChange={e => setAppSettings({...appSettings, forceUpdate: { ...appSettings.forceUpdate, android: { ...appSettings.forceUpdate.android, requiredVersion: e.target.value } }})} 
+                                                    className="w-full p-2 mt-1 border border-gray-200 rounded-lg text-sm outline-none" 
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="text-xs font-bold text-gray-500">Play Store URL</label>
+                                                <input 
+                                                    type="url" 
+                                                    value={appSettings.forceUpdate.android.storeUrl} 
+                                                    onChange={e => setAppSettings({...appSettings, forceUpdate: { ...appSettings.forceUpdate, android: { ...appSettings.forceUpdate.android, storeUrl: e.target.value } }})} 
+                                                    className="w-full p-2 mt-1 border border-gray-200 rounded-lg text-sm outline-none" 
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button 
+                                        onClick={() => handleUpdateSettings(appSettings)} 
+                                        disabled={saving} 
+                                        className="w-full bg-[#2CB5A0] text-white py-3 rounded-xl font-bold text-sm shadow-sm md:w-auto md:px-8 mt-4"
+                                    >
+                                        {saving ? 'Saving...' : 'Save Update Rules'}
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}
