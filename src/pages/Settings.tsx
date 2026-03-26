@@ -5,10 +5,11 @@ import { useAuth } from '../context/AuthContext';
 
 const SettingsPage: React.FC = () => {
     const { user } = useAuth();
-    const [appSettings, setAppSettings] = useState<{ regions: any[], versionControls: any[], forceUpdate?: any }>({ 
+    const [appSettings, setAppSettings] = useState<{ regions: any[], versionControls: any[], forceUpdate?: any, allowedRegions?: any }>({ 
         regions: [], 
         versionControls: [],
-        forceUpdate: { ios: { requiredVersion: '', storeUrl: '' }, android: { requiredVersion: '', storeUrl: '' } }
+        forceUpdate: { ios: { requiredVersion: '', storeUrl: '' }, android: { requiredVersion: '', storeUrl: '' } },
+        allowedRegions: { android: [], ios: [] }
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -29,7 +30,8 @@ const SettingsPage: React.FC = () => {
             setAppSettings({
                 regions: data.regions || [],
                 versionControls: data.versionControls || [],
-                forceUpdate: data.forceUpdate || { ios: { requiredVersion: '', storeUrl: '' }, android: { requiredVersion: '', storeUrl: '' } }
+                forceUpdate: data.forceUpdate || { ios: { requiredVersion: '', storeUrl: '' }, android: { requiredVersion: '', storeUrl: '' } },
+                allowedRegions: data.allowedRegions || { android: [], ios: [] }
             });
         } catch (error) {
             console.error('Error fetching settings:', error);
@@ -60,6 +62,23 @@ const SettingsPage: React.FC = () => {
             r.countryCode === countryCode ? { ...r, isActive: !r.isActive } : r
         );
         handleUpdateSettings({ ...appSettings, regions: updatedRegions });
+    };
+
+    const handleTogglePlatformAccess = (platform: 'android' | 'ios', countryCode: string) => {
+        const currentAllowed = appSettings.allowedRegions[platform] || [];
+        let updatedAllowed;
+        if (currentAllowed.includes(countryCode)) {
+            updatedAllowed = currentAllowed.filter((c: string) => c !== countryCode);
+        } else {
+            updatedAllowed = [...currentAllowed, countryCode];
+        }
+        
+        const updatedAllowedRegions = {
+            ...appSettings.allowedRegions,
+            [platform]: updatedAllowed
+        };
+        
+        handleUpdateSettings({ ...appSettings, allowedRegions: updatedAllowedRegions });
     };
 
     const handleAddVersion = () => {
@@ -123,17 +142,42 @@ const SettingsPage: React.FC = () => {
                             <div className="space-y-3">
                                 {appSettings.regions?.map((region: any) => (
                                     <div key={region.countryCode} className="p-4 rounded-xl border border-gray-100 bg-gray-50/50 flex items-center justify-between">
-                                        <div>
+                                        <div className="flex-1">
                                             <span className="font-semibold text-gray-700">{region.name} ({region.countryCode})</span>
                                             <p className="text-xs text-gray-500">Currency: {region.currencySymbol}</p>
                                         </div>
-                                        <button
-                                            onClick={() => handleToggleRegion(region.countryCode)}
-                                            disabled={saving}
-                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${region.isActive ? 'bg-[#2CB5A0]' : 'bg-gray-300'}`}
-                                        >
-                                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${region.isActive ? 'translate-x-6' : 'translate-x-1'}`} />
-                                        </button>
+                                        <div className="flex items-center gap-6">
+                                            <div className="flex flex-col items-center gap-1">
+                                                <span className="text-[10px] font-bold text-gray-400 uppercase">Android</span>
+                                                <button
+                                                    onClick={() => handleTogglePlatformAccess('android', region.countryCode)}
+                                                    disabled={saving}
+                                                    className={`relative inline-flex h-5 w-10 items-center rounded-full transition-colors focus:outline-none ${appSettings.allowedRegions?.android?.includes(region.countryCode) ? 'bg-green-500' : 'bg-gray-300'}`}
+                                                >
+                                                    <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${appSettings.allowedRegions?.android?.includes(region.countryCode) ? 'translate-x-5.5' : 'translate-x-1'}`} />
+                                                </button>
+                                            </div>
+                                            <div className="flex flex-col items-center gap-1">
+                                                <span className="text-[10px] font-bold text-gray-400 uppercase">iOS</span>
+                                                <button
+                                                    onClick={() => handleTogglePlatformAccess('ios', region.countryCode)}
+                                                    disabled={saving}
+                                                    className={`relative inline-flex h-5 w-10 items-center rounded-full transition-colors focus:outline-none ${appSettings.allowedRegions?.ios?.includes(region.countryCode) ? 'bg-blue-500' : 'bg-gray-300'}`}
+                                                >
+                                                    <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${appSettings.allowedRegions?.ios?.includes(region.countryCode) ? 'translate-x-5.5' : 'translate-x-1'}`} />
+                                                </button>
+                                            </div>
+                                            <div className="flex flex-col items-center gap-1 ml-4 border-l pl-4">
+                                                <span className="text-[10px] font-bold text-gray-400 uppercase">Global</span>
+                                                <button
+                                                    onClick={() => handleToggleRegion(region.countryCode)}
+                                                    disabled={saving}
+                                                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${region.isActive ? 'bg-[#2CB5A0]' : 'bg-gray-300'}`}
+                                                >
+                                                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${region.isActive ? 'translate-x-6' : 'translate-x-1'}`} />
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
